@@ -21,8 +21,17 @@ steps:
       python -c "import loremipsum; print(loremipsum.paragraph(max_char=100))" > result2.txt
       cat result2.txt
       buildkite-agent annotate --style success --context paragraph < result2.txt
+    artifact_paths: "result2.txt"
     plugins:
       - docker#v5.12.0:
           image: python:3.13
           mount-buildkite-agent: true
           propagate-uid-gid: true
+
+  - label: ":package: Download artifact"
+    key: download
+    depends_on: paragraph
+    command: |
+      buildkite-agent artifact download result2.txt .
+      echo "Contents of result2.txt:"
+      cat result2.txt
