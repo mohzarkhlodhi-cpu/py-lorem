@@ -12,6 +12,7 @@ steps:
       - docker#v5.12.0:
           image: python:3.13
           mount-buildkite-agent: true
+          propagate-uid-gid: true
 
   - label: ":python: Lorem paragraph"
     key: paragraph
@@ -24,3 +25,4 @@ steps:
       - docker#v5.12.0:
           image: python:3.13
           mount-buildkite-agent: true
+          propagate-uid-gid: true
