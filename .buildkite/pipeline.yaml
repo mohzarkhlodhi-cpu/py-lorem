@@ -35,3 +35,26 @@ steps:
       buildkite-agent artifact download result2.txt .
       echo "Contents of result2.txt:"
       cat result2.txt
+
+  - label: ":docker: Build & push image"
+    key: image
+    depends_on: download
+    command: |
+      REGISTRY="packages.buildkite.com/mohzarkhlodhi-cpu/lorem-images"
+      IMAGE="$$REGISTRY/py-lorem"
+
+      echo "--- :docker: Building image"
+      docker build -t "$$IMAGE:$$BUILDKITE_BUILD_NUMBER" -t "$$IMAGE:latest" .
+
+      echo "--- :lock: Logging in with OIDC"
+      buildkite-agent oidc request-token --audience "https://$$REGISTRY" --lifetime 299 \
+        | docker login "$$REGISTRY" --username buildkite --password-stdin
+
+      echo "--- :rocket: Pushing image"
+      docker push "$$IMAGE:$$BUILDKITE_BUILD_NUMBER"
+      docker push "$$IMAGE:latest"
+
+      echo "--- :white_check_mark: Testing pushed image"
+      docker run --rm "$$IMAGE:$$BUILDKITE_BUILD_NUMBER"
+
+      docker logout "$$REGISTRY"
