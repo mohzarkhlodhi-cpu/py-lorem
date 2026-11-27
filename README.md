@@ -27,17 +27,6 @@ The customer says that when they echo the values, the output is **empty**.
 
 ---
 
-## My reply to the customer
-
-> Hi there,
->
-> Thanks for reaching out, and welcome to Buildkite! Including your hook and pipeline made it much easier to see what's happening. Two separate issues are causing the empty values.
->
-> **The variables are replaced when the pipeline is uploaded, not when the step runs.**
-> When `buildkite-agent pipeline upload` reads your `pipeline.yaml`, it replaces `$USER` and `$PASSWORD` with their values *at upload time*. If they don't exist in the upload job's environment, the command reaches the agent as an empty `echo`. To have the shell expand a variable when the step actually runs, escape it with `$$` (or `\$`), for example `echo "$$APP_USERNAME"`.
->
----
-
 ## Before and after
 
 **Before (customer):**
